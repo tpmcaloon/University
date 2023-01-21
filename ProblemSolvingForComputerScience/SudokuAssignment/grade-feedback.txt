@@ -1,0 +1,49 @@
+Passed test (1 mark): Task 1 -  Has the task been attempted?
+Passed test (1 mark): Task 1 -  Does the function use the argument row?
+Passed test (1 mark): Task 1 -  Does the function use a loop?
+Passed test (1 mark): Task 1 -  Does the function return an array of all elements equal to row? 
+
+Passed test (1 mark): Task 2 -  Has the task been attempted?
+Passed test (1 mark): Task 2 -  Does the function use the queue data structure?
+Passed test (1 mark): Task 2 -  Does the function return an array?
+Passed test (1 mark): Task 2 -  Does the function return an array of the same length as the argument?
+Passed test (1 mark): Task 2 -  Does the function return an altered array for p = 1?
+Passed test (1 mark): Task 2 -  Does the function return [1, 2, 3, 4] for arguments [1, 2, 3, 4] and p = 0?
+Passed test (1 mark): Task 2 -  Does the function return [1, 2, 3, 4] for arguments [2, 3, 4, 1] and p = 1? 
+
+Passed test (1 mark): Task 3 -  Has the task been attempted?
+Passed test (1 mark): Task 3 -  Does the function call linearSearch?
+Passed test (1 mark): Task 3 -  Does the function use the argument j as a column index?
+Passed test (1 mark): Task 3 -  Does the function return true for all columns of [[1, 1, 1, 1], [2, 2, 2, 2], [3, 3, 3, 3], [4, 4, 4, 4]]?
+Passed test (1 mark): Task 3 -  Does the function return false for all columns of [[4, 3, 2, 1], [4, 3, 2, 1], [4, 3, 2, 1], [4, 3, 2, 1]]? 
+
+Passed test (1 mark): Task 4 -  Has the task been attempted?
+Passed test (1 mark): Task 4 -  Does the function call checkColumn?
+Passed test (1 mark): Task 4 -  Can the function return a Boolean?
+Passed test (1 mark): Task 4 -  Does the function return correct thing? 
+
+Passed test (1 mark): Task 5 -  Has the task been attempted?
+Passed test (1 mark): Task 5 -  Does the function call makeGrid?
+Passed test (1 mark): Task 5 -  Does the function call linearSearch?
+Passed test (1 mark): Task 5 -  Does the function use the arguments row1, row2, col1, col2?
+Passed test (1 mark): Task 5 -  Does the function return correct thing? 
+
+Passed test (1 mark): Task 6 -  Has the task been attempted?
+Passed test (1 mark): Task 6 -  Does the function call checkGrid?
+Passed test (1 mark): Task 6 -  Does the function call checkGrid with five arguments?
+Passed test (1 mark): Task 6 -  Can the function return a Boolean?
+Passed test (1 mark): Task 6 -  Does the function return the correct Boolean? 
+
+Passed test (1 mark): Task 7 -  Has the task been attempted?
+Passed test (1 mark): Task 7 -  Does the function return an array?
+Passed test (1 mark): Task 7 -  Does the function call checkGrids and colCheck?
+Passed test (1 mark): Task 7 -  Does the function call makeRows and permutePuzzle?
+Passed test (1 mark): Task 7 -  Does the function return solved puzzle? 
+
+Passed test (1 mark): Task 8 -  Has the task been attempted?
+Passed test (1 mark): Task 8 -  Does the attempted function return an array of arrays?
+Passed test (1 mark): Task 8 -  Can the attempted function return an array of coordinates?
+Passed test (1 mark): Task 8 -  Does the attempted function return an array of length n?
+Passed test (1 mark): Task 8 -  Does the attempted function produce an array of distinct coordinates?
+
+Total marks: 40

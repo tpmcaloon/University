@@ -1,0 +1,20 @@
+Passed test (1 mark): #Task 1:  Task attempted
+Passed test (1 mark): #Task 1:  MISSING1 does not appear in attempted code
+Passed test (1 mark): #Task 1:  MISSING2 does not appear in attempted code
+Passed test (1 mark): #Task 1:  MISSING3 does not appear in attempted code
+Passed test (1 mark): #Task 1:  minBinarySearch returns correct output
+Passed test (1 mark): #Task 2:  Task attempted
+Passed test (1 mark): #Task 2:  Only two new loops created
+Passed test (1 mark): #Task 2:  genPrimes returns correct output
+Passed test (1 mark): #Task 3:  Task attempted
+Passed test (1 mark): #Task 3:  Function calls genPrimes, minBinarySearch and Math.random()
+Passed test (1 mark): #Task 3:  Function returns a prime of length len
+Passed test (1 mark): #Task 4:  Task attempted
+Passed test (1 mark): #Task 4:  Does the function return the factors for a semiprime n?
+Passed test (1 mark): #Task 4:  Does the function return n it is prime, or false if n is neither a prime nor a semiprime?
+Failed test (0 marks): #Task 4:  Does the correctly working function have a better time complexity than n squared? See below for error message 
+
+This semiPrimes function either does not produce the correct output or has two nested loops with O(n) iterations - you could have used a more efficient method using Binary Search: expected false to equal true
+
+
+Total marks: 14

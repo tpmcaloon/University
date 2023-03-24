@@ -1,18 +1,187 @@
+import java.awt.BorderLayout;
+import java.io.Serial;
 import java.math.BigInteger;
 import java.util.Random;
-import java.util.Scanner;
 
-public class RSA {
+import javax.swing.*;
 
-    private static final int KEY_SIZE = 512;
+public class RSA extends JFrame {
 
-    // method to generate prime numbers
+    @Serial
+    private static final long serialVersionUID = 1L;
+    // Key size in bits
+    private static final int KEY_SIZE = 1024;
+    private final JPanel panel;
+
+    // GUI components
+    private final JTextArea messageArea;
+    private final JTextField publicKeyField;
+    private final JTextField privateKeyField;
+    private final JTextField encryptedMessageField;
+    private final JTextArea decryptedMessageField;
+    private final JTextField interceptedMessageField;
+
+    public RSA() {
+        // Sets the title of the window
+        setTitle("RSA Encryption");
+
+        // Creates a panel to hold the GUI components
+        panel = new JPanel();
+        panel.setLayout(null);
+
+        // Create Label and Field for the public key
+        JLabel publicKeyLabel = new JLabel("Public Key:");
+        publicKeyLabel.setBounds(10, 10, 80, 25);
+        panel.add(publicKeyLabel);
+        publicKeyField = new JTextField();
+        publicKeyField.setBounds(100, 10, 600, 25);
+        publicKeyField.setEditable(false);
+        panel.add(publicKeyField);
+
+        // Create Label and Field for the private key
+        JLabel privateKeyLabel = new JLabel("Private Key:");
+        privateKeyLabel.setBounds(10, 40, 80, 25);
+        panel.add(privateKeyLabel);
+        privateKeyField = new JTextField();
+        privateKeyField.setBounds(100, 40, 600, 25);
+        privateKeyField.setEditable(false);
+        panel.add(privateKeyField);
+
+        // Create a Button to Generate Keys
+        JButton generateKeysButton = new JButton("Generate Keys");
+        generateKeysButton.setBounds(100, 70, 600, 25);
+        generateKeysButton.addActionListener(e -> {
+            BigInteger[] keys = generateKeys();
+            publicKeyField.setText(keys[0] + " " + keys[2]);
+            privateKeyField.setText(keys[1] + " " + keys[2]);
+        });
+        panel.add(generateKeysButton);
+
+        // Create label and Text Area for the Message from ALice
+        JLabel messageLabel = new JLabel("Message (Alice):");
+        messageLabel.setBounds(10, 125, 100, 25);
+        panel.add(messageLabel);
+        messageArea = new JTextArea();
+        messageArea.setLineWrap(true);
+        messageArea.setWrapStyleWord(true);
+        JScrollPane messageScrollPane = new JScrollPane(messageArea);
+        messageScrollPane.setBounds(175, 125, 530, 70);
+        panel.add(messageScrollPane);
+
+        // Create Label and Text Area for the Encrypted Message from ALice
+        JLabel encryptedMessageLabel = new JLabel("Encrypted Message:");
+        encryptedMessageLabel.setBounds(10, 200, 150, 25);
+        panel.add(encryptedMessageLabel);
+        encryptedMessageField = new JTextField();
+        encryptedMessageField.setBounds(175, 200, 530, 25);
+        encryptedMessageField.setEditable(false);
+        panel.add(encryptedMessageField);
+
+        // Create a Button to Encrypt Alice's Message
+        JButton encryptButton = new JButton("Encrypt (Send to Bob)");
+        encryptButton.setBounds(175, 230, 530, 25);
+        encryptButton.addActionListener(e -> {
+            try {
+                String message = messageArea.getText().trim();
+                if (message.isEmpty()) {
+                    JOptionPane.showMessageDialog(panel, "Please enter a message.");
+                    return;
+                }
+                BigInteger m = new BigInteger(message.getBytes());
+                BigInteger[] keys = parseKeys(publicKeyField.getText().trim());
+                if (keys == null) {
+                    JOptionPane.showMessageDialog(panel, "Please generate keys first.");
+                    return;
+                }
+                BigInteger c = encrypt(m, keys[0], keys[1]);
+                encryptedMessageField.setText(c.toString());
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(panel, "An error occurred: " + ex.getMessage());
+            }
+        });
+        panel.add(encryptButton);
+
+        // Create Label and Text Area for the Decrypted Message from ALice for Bob
+        JLabel decryptedMessageLabel = new JLabel("Decrypted Message (Bob):");
+        decryptedMessageLabel.setBounds(10, 290, 150, 25);
+        panel.add(decryptedMessageLabel);
+        decryptedMessageField = new JTextArea();
+        decryptedMessageField.setLineWrap(true);
+        decryptedMessageField.setWrapStyleWord(true);
+        decryptedMessageField.setEditable(false);
+        JScrollPane decryptedMessageScrollPane = new JScrollPane(decryptedMessageField);
+        decryptedMessageScrollPane.setBounds(175, 290, 530, 70);
+        panel.add(decryptedMessageScrollPane);
+
+        // Create Label and Field for the Intercepted Message by Charlie Between ALice for Bob
+        JLabel interceptedMessageLabel = new JLabel("Intercepted Message (Charlie):");
+        interceptedMessageLabel.setBounds(10, 420, 200, 25);
+        panel.add(interceptedMessageLabel);
+        interceptedMessageField = new JTextField();
+        interceptedMessageField.setBounds(200, 420, 505, 25);
+        interceptedMessageField.setEditable(false);
+        panel.add(interceptedMessageField);
+
+        // Create a Button for Bob to Decrypt Alice's Message
+        JButton decryptButton = new JButton("Decrypt (Bob Receives the Message)");
+        decryptButton.setBounds(175, 365, 530, 25);
+        decryptButton.addActionListener(e -> {
+            try {
+                String encryptedMessage = encryptedMessageField.getText().trim();
+                if (encryptedMessage.isEmpty()) {
+                    JOptionPane.showMessageDialog(panel, "Please enter an encrypted message.");
+                    return;
+                }
+                BigInteger c = new BigInteger(encryptedMessage);
+                BigInteger[] keys = parseKeys(privateKeyField.getText().trim());
+                if (keys == null) {
+                    JOptionPane.showMessageDialog(panel, "Please generate keys first.");
+                    return;
+                }
+                BigInteger m = decrypt(c, keys[0], keys[1]);
+                interceptedMessageField.setText(c.toString());
+                decryptedMessageField.setText(new String(m.toByteArray()));
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(panel, "An error occurred: " + ex.getMessage());
+            }
+        });
+        panel.add(decryptButton);
+
+        add(panel, BorderLayout.CENTER);
+
+        setSize(750, 500);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+    }
+
+    // This method takes a string containing two space-separated numbers as input and returns an array of BigIntegers.
+    private BigInteger[] parseKeys(String keys) {
+        String[] parts = keys.split(" ");
+        if (parts.length != 2) {
+            return null;
+        }
+        try {
+            BigInteger e = new BigInteger(parts[0]);
+            BigInteger n = new BigInteger(parts[1]);
+            return new BigInteger[] { e, n };
+        } catch (NumberFormatException ex) {
+            return null;
+        }
+    }
+
+    // This is the main method that starts the RSA_GUI application
+    public static void main(String[] args) {
+        RSA gui = new RSA();
+        gui.setVisible(true);
+    }
+
+    // This method generates a prime number with a specified number of bits
     public static BigInteger generatePrime(int numBits) {
         Random random = new Random();
         return BigInteger.probablePrime(numBits, random);
     }
 
-    // method to generate random number 'e' where gcd(e,r)=1
+    // This method generates a random number that is relatively prime to the given BigInteger parameter 'r'
     public static BigInteger generateRandomNumber(BigInteger r) {
         Random random = new Random();
         BigInteger e = BigInteger.ZERO;
@@ -22,136 +191,24 @@ public class RSA {
         return e;
     }
 
-    // method to generate public and private keys
+    // Method to generate RSA public and private keys
     public static BigInteger[] generateKeys() {
-        // generate two prime numbers
         BigInteger p = generatePrime(KEY_SIZE);
         BigInteger q = generatePrime(KEY_SIZE);
-        // calculate n and r
         BigInteger n = p.multiply(q);
         BigInteger r = (p.subtract(BigInteger.ONE)).multiply(q.subtract(BigInteger.ONE));
-        // generate random number e such that gcd(e,r) = 1
         BigInteger e = generateRandomNumber(r);
-        // calculate private key d
         BigInteger d = e.modInverse(r);
-        // return public and private keys
-        return new BigInteger[]{e, d, n};
+        return new BigInteger[] { e, d, n };
     }
 
-    // method to encrypt message using public key
+    // Method to encrypt a message using RSA
     public static BigInteger encrypt(BigInteger m, BigInteger e, BigInteger n) {
         return m.modPow(e, n);
     }
 
-    // method to decrypt message using private key
+    // Method to decrypt an encrypted message using RSA
     public static BigInteger decrypt(BigInteger c, BigInteger d, BigInteger n) {
         return c.modPow(d, n);
-    }
-
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-
-        System.out.println("RSA Prototype");
-
-        // generate public and private keys
-        BigInteger[] keys = generateKeys();
-        BigInteger e = keys[0];
-        BigInteger d = keys[1];
-        BigInteger n = keys[2];
-
-        System.out.println("\nPublic Key: (" + e + ", " + n + ")");
-        System.out.println("Private Key: (" + d + ", " + n + ")");
-
-        // prompt user to enter message and recipient
-        System.out.print("\nEnter message to encrypt: ");
-        String message = "";
-        while (message.isEmpty()) {
-            message = sc.nextLine().trim();
-            if (message.isEmpty()) {
-                System.out.print("Invalid input. Please enter a non-empty message: ");
-            }
-        }
-
-        // convert message to BigInteger
-        BigInteger m = new BigInteger(message.getBytes());
-
-        // encrypt message using recipient's public key
-        BigInteger c = encrypt(m, e, n);
-
-        System.out.println("\nEncrypted message: " + c);
-
-        // simulate an interception by Charlie
-        System.out.println("\nCharlie intercepted the message: " + c);
-
-        // prompt user to choose whether to decrypt the message
-        String response = "";
-        while (!response.equalsIgnoreCase("Y") && !response.equalsIgnoreCase("N")) {
-            System.out.print("\nDo you want to decrypt the message? (Y/N): ");
-            response = sc.nextLine().trim();
-            if (!response.equalsIgnoreCase("Y") && !response.equalsIgnoreCase("N")) {
-                System.out.print("Invalid input. Please enter 'Y' or 'N': ");
-            }
-        }
-
-        // decrypt message using private key
-        if (response.equalsIgnoreCase("Y")) {
-            BigInteger decryptedMessage;
-            try {
-                decryptedMessage = decrypt(c, d, n);
-                // convert decrypted message back to string
-                String originalMessage = new String(decryptedMessage.toByteArray());
-                System.out.println("\nDecrypted message: " + originalMessage);
-            } catch (ArithmeticException ex) {
-                System.out.println("\nError: " + ex.getMessage());
-                System.out.println("Exiting program...");
-            }
-        }
-
-        // demonstrate a problematic case
-        System.out.println("\nDemonstrating a problematic case...");
-        System.out.println("\nDemonstration of a problematic case where the prime factors of n are small and are not kept secret, making it easy for an attacker to factor n and break the encryption. \nThe p and q values used to generate n in this problematic case are small primes, p=61 and q=53, meaning the attacker can easily factor n to recover p and q.");
-
-        // generate two
-
-        System.out.println("\nPublic Key: (" + e + ", " + n + ")");
-        System.out.println("Private Key: (" + d + ", " + n + ")");
-
-        // prompt user to enter message and recipient
-        System.out.print("\nEnter message to encrypt: ");
-        String message2 = "";
-        while (message2.isEmpty()) {
-            message2 = sc.nextLine().trim();
-            if (message2.isEmpty()) {
-                System.out.print("Invalid input. Please enter a non-empty message: ");
-            }
-        }
-
-        // convert message to BigInteger
-        BigInteger m2 = new BigInteger(message2.getBytes());
-
-        // encrypt message using recipient's public key
-        BigInteger c2 = encrypt(m2, e, n);
-
-        System.out.println("\nEncrypted message: " + c2);
-
-        // prompt user to choose whether to decrypt the message
-        String response2 = "";
-        while (!response2.equalsIgnoreCase("Y") && !response2.equalsIgnoreCase("N")) {
-            System.out.print("\nDo you want to decrypt the message? (Y/N): ");
-            response2 = sc.nextLine().trim();
-            if (!response2.equalsIgnoreCase("Y") && !response2.equalsIgnoreCase("N")) {
-                System.out.print("Invalid input. Please enter 'Y' or 'N': ");
-            }
-        }
-
-        // decrypt message using private key
-        if (response2.equalsIgnoreCase("Y")) {
-            BigInteger decryptedMessage2 = decrypt(c2, d, n);
-            // convert decrypted message back to string
-            String originalMessage2 = new String(decryptedMessage2.toByteArray());
-            System.out.println("\nDecrypted message: " + originalMessage2);
-        } else {
-            System.out.println("\nExiting program...");
-        }
     }
 }

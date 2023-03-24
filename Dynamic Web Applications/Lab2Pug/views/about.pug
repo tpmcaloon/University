@@ -1,0 +1,11 @@
+doctype html
+html
+  head
+    title= "Welcome to " + shopData.shopName
+  body
+    h1= "About " + shopData.shopName
+    p We sell all sorts of drinks
+    h2 Here are some of our shop locations:
+    ul
+    each val in shopData.length ? values : ['There are no values']
+      li= shopData.shopLocations 

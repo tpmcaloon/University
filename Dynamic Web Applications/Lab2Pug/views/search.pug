@@ -1,0 +1,11 @@
+doctype html
+html
+  head
+    title= "Welcome to " + shopData.shopName
+  body
+    h1= "Search " + shopData.shopName
+
+    p You can search for drinks here
+    form(action='/search-result' method='GET')
+      input#search-box(type='text' name='keyword' onfocus="this.value=''" value='Search')
+      input(type='submit' value='OK')

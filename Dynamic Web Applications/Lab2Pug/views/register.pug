@@ -1,0 +1,21 @@
+doctype html
+html
+  head
+    title= "Welcome to " + shopData.shopName
+  body
+    h1= "Register for " + shopData.shopName
+    p Please fill in this form to register
+    form(method='POST' action='/registered')
+      label(for='first') First Name: 
+      input#first(type='text' name='first' onfocus="this.value=''" value='first name')
+      br
+      br
+      label(for='last') Last Name: 
+      input#last(type='text' name='last' onfocus="this.value=''" value='last name')
+      br
+      br
+      label(for='email') Email: 
+      input#email(type='text' name='email' onfocus="this.value=''" value='email')
+      br
+      br
+      input(type='submit' value='OK')
